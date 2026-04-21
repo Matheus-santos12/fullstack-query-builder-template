@@ -4,10 +4,13 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable("courses_modules", (table) => {
     (table.increments("id").primary(),
       table.text("name").notNullable(),
-      table.integer("courses_id").references("id").inTable("courses"));
+      table
+        .integer("courses_id")
+        .notNullable()
+        .references("id")
+        .inTable("courses"));
   });
 }
-
 export async function down(knex: Knex): Promise<void> {
   await knex.schema.dropTable("courses_modules");
 }

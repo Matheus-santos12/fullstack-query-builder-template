@@ -37,4 +37,33 @@ app.delete("/courses/:id", async (request: Request, response: Response) => {
   return response.json();
 });
 
+app.post("/modules", async (request: Request, response: Response) => {
+  const { name, courses_id } = request.body;
+
+  await knex("courses_modules").insert({ name, courses_id });
+
+  return response.status(201).json();
+});
+
+app.get("/modules", async (request: Request, response: Response) => {
+  const modules = await knex("courses_modules").select();
+
+  return response.json(modules);
+});
+
+app.get(
+  "/courses/:id/modules",
+  async (request: Request, response: Response) => {
+    const courses = await knex("courses")
+      .select(
+        "courses_modules.id",
+        "courses_modules.name AS module",
+        "courses.name AS course",
+      )
+      .join("courses_modules", "courses.id", "courses_modules.courses_id");
+
+    return response.json(courses);
+  },
+);
+
 app.listen(3333, () => console.log(`Server is running on port 3333`));
